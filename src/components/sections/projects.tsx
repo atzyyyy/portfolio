@@ -54,8 +54,9 @@ export function Projects() {
                     )}
                   </CardTitle>
 
+                  {/* year: dusty-denim on prussian is 4.44:1 — under 4.5 for 12px text */}
                   {project.year ? (
-                    <CardAction className="text-xs font-normal text-muted-foreground">
+                    <CardAction className="text-xs font-normal text-foreground/80">
                       {project.year}
                     </CardAction>
                   ) : null}

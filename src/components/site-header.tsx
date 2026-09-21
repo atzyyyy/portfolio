@@ -51,7 +51,7 @@ export function SiteHeader() {
             <Link
               key={item.href}
               href={item.href}
-              className="rounded-md px-3 py-2 text-sm text-foreground/80 transition-colors hover:bg-accent hover:text-foreground"
+              className="rounded-md px-3 py-2 text-sm text-foreground/80 outline-none transition-colors hover:bg-accent hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50"
             >
               {item.label}
             </Link>
@@ -97,7 +97,7 @@ export function SiteHeader() {
                   key={item.href}
                   href={item.href}
                   onClick={() => setOpen(false)}
-                  className="rounded-md px-3 py-2.5 text-base text-foreground/80 transition-colors hover:bg-accent hover:text-foreground"
+                  className="rounded-md px-3 py-2.5 text-base text-foreground/80 outline-none transition-colors hover:bg-accent hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50"
                 >
                   {item.label}
                 </Link>

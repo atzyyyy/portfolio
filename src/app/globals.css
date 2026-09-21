@@ -120,7 +120,11 @@
   --destructive: oklch(0.704 0.191 22.216);
   --border: color-mix(in srgb, var(--dusk-blue) 45%, var(--ink-black));
   --input: color-mix(in srgb, var(--dusk-blue) 60%, var(--ink-black));
-  --ring: var(--dusty-denim);
+  /* focus ring: every generated component draws it at /50, and dusty-denim at 50%
+     over ink-black is 2.3:1 — under the 3:1 that WCAG 1.4.11 asks of a focus
+     indicator. Alabaster at 50% measures 4.2:1, so the ring stays visible even
+     after the built-in opacity is applied. */
+  --ring: var(--alabaster-grey);
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);
