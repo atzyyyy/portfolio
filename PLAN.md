@@ -1,8 +1,8 @@
 # Portfolio — Build Plan (compact)
 
-**Status:** Phases 0–5a built and verified; 5b's repo-side prep is done. `npm run lint`, `npx tsc --noEmit` and `npm run build` green. **Open:** (a) `src/lib/data.ts` still holds placeholder employers, dates and metrics — real content is yours to fill; (b) sending is unproven without keys, so the form answers with the mailto fallback today; (c) deploy needs your Vercel account and the Resend secrets (see the 5b checklist). Next: **push, import to Vercel, set the two env vars, then check the live URL on a phone**.
+**Status:** Phases 0–5a built and verified; 5b is **deploying and running** — the site is live on Vercel (production, `Ready`) and the repo is pushed. `npm run lint`, `npx tsc --noEmit` and `npm run build` green. **Open:** (a) `src/lib/data.ts` still holds placeholder employers, dates and metrics — real content is yours to fill; (b) sending is unproven without keys, so the live form answers with the mailto fallback today (verified on the deploy); (c) `public/memoji.png` does not exist, so the deploy shows the monogram circle; (d) the Vercel project has **zero** environment variables. Next: **fill `data.ts`, add the memoji, set the two Resend vars (local + Vercel), redeploy, check on a phone**.
 
-**Waiting on you:** (1) real content for `site.*`, `experience[]`, `projects[]`; (2) `public/memoji.png` (square, transparent, ≥1024px) — the hero shows a monogram circle until it exists; (3) `RESEND_API_KEY` + `CONTACT_TO_EMAIL` in `.env.local` **and in Vercel** — copy `.env.example`; Resend 403s unless `to` is your own account address; (4) a Vercel project for this repo (import `atzyyyy/portfolio`) with those two env vars set for Production **and** Preview.
+**Waiting on you:** (1) real content for `site.*`, `experience[]`, `projects[]`; (2) `public/memoji.png` (square, transparent, ≥1024px) — the hero shows a monogram circle until it exists; (3) `RESEND_API_KEY` + `CONTACT_TO_EMAIL` written into `.env.local` — copy `.env.example` (Resend 403s unless `to` is your own account address); (4) a phone pass over the live URL once (1)–(3) land.
 
 ## Stack (verified in repo)
 
@@ -111,7 +111,7 @@ Handle `error` explicitly with a generic visitor-facing message, never leak the 
 | 3 ✅ | `data.ts` content + Experience + Projects sections | components verified in Chrome (1/2/3-col grid at sm/md/lg, `rel="noopener"`); **content is still placeholder** — see Notes | 2h |
 | 4 ✅ | contact + action + Resend + guards | verified: empty submit blocked by native validation, bogus email rejected inside the action (direct POST returned the field error), honeypot returns success with **no** send, sub-2s submit rejected, 4th submission in an hour rate-limited, missing key renders the `mailto:` fallback. **Mail delivery itself still unproven — needs the keys** | 1.5h |
 | 5a ✅ | polish: keyboard pass, focus-ring token + contrast, Lighthouse on the production build | 21 focusables in DOM order, each with a ≥3:1 focus indicator; Lighthouse mobile **99/100/100/100** on the production build; `lint`/`tsc`/`build` green | 1h |
-| 5b | deploy: Vercel project + env, live URL checked on a phone | repo-side prep **done** (metadataBase, OG image, tree committed); remaining work needs your Vercel account and the two Resend secrets | 1h |
+| 5b | deploy: Vercel project + env, live URL checked on a phone | project linked and a production deploy `Ready` at `portfolio-iota-five-kx6zoj4yl0.vercel.app`; **remaining:** the two Resend vars on the project (needs your account) and the phone pass | 1h |
 
 Total ≈ 8h.
 
@@ -185,11 +185,27 @@ v2 order by learning value: project detail routes → Postgres/Supabase behind p
 
 ### Deploy checklist (Phase 5b)
 
-1. `npm i -g vercel && vercel login`, then `vercel link` in the repo root and `vercel env add RESEND_API_KEY` + `vercel env add CONTACT_TO_EMAIL` for Production and Preview. Or import `atzyyyy/portfolio` at vercel.com/new and set the same two vars in Project → Settings → Environment Variables.
+1. **Linked and deployed.** `vercel` CLI 59.23.2 at `~/.local/bin/vercel`, logged in as `atzyyyy`, repo linked to `atzyyyys-projects/portfolio` (`.vercel/project.json`), production deployment `Ready`. **Still to do:** the two env vars, which need your Resend account — write them into `.env.local` (copy `.env.example`) and they can be pushed to the project for Production and Preview without the values passing through chat: `set -a; . ./.env.local; set +a; for e in production preview; do for k in RESEND_API_KEY CONTACT_TO_EMAIL; do printf '%s' "${!k}" | vercel env add "$k" "$e"; done; done`, then `vercel --prod` to rebuild. `vercel env ls` currently reports *No Environment Variables found*.
 2. `vercel --prod`, then check the deployed URL on a phone: sticky header, anchors landing under it, 375px sheet, form submit.
 3. Send one real message through the deployed form and confirm delivery plus the Reply-To. Until a domain is verified at resend.com/domains, `from` stays `onboarding@resend.dev` and `to` must be your own Resend account address (pitfall 8).
 4. ~~Set `metadataBase` and add an OG image~~ — **done in the repo** (Phase 5b prep). `metadataBase` falls back to `VERCEL_PROJECT_PRODUCTION_URL`, so previews already resolve on the deploy; set `NEXT_PUBLIC_SITE_URL` only when you point a custom domain at it. The generated card reads `site.name`, `site.role`, `hero.tagline` and `hero.stack`, so it tracks `data.ts` with no second copy to maintain. Check the card renders after the deploy with the Facebook Sharing Debugger or `opengraph.xyz`; both cache, so re-scrape after a content change.
 
-**Commit** the phase 5a/5b-prep commit on `master` (top of `git log`) carries these changes. Nothing is pushed yet — `git push` is yours to run, then import the repo at vercel.com/new.
+**Commit** `6ae46ee` on `master` carries the phase 5a/5b-prep changes, and it is **pushed** (`origin/master` matches). **Checked (Git integration):** `GET /v9/projects/{id}` returns no `link` object and the project has 0 deployment hooks, so the Git integration is **not** connected — a `git push` does **not** deploy, and `vercel --prod` stays mandatory after any content change. Connecting it (`vercel git connect`, or Project → Settings → Git) grants Vercel read access to the GitHub repo and needs your GitHub authorization, so it is left to you. The production deployment in the API (`v6/deployments`, target `production`, state `READY`) reports `source: master`, `sha: 6ae46ee` — it matches the pushed commit.
 
-**Uncommitted:** nothing — the phase 5a/5b-prep commit holds every change. Not pushed.
+### Where we are (Phase 5b — deployed, secrets pending)
+
+**Measured against the live production deployment** (`https://portfolio-iota-five-kx6zoj4yl0.vercel.app`, the production alias; `vercel ls` also lists the per-deploy URL `portfolio-pcowcljqx-…`). `npm run lint`, `npx tsc --noEmit` and `npm run build` re-run green on the current tree.
+
+| | State |
+|---|---|
+| Deploy | `vercel ls` → one deployment, **Ready**, Production, 52s build, user `atzyyyy`. Repo pushed: `master` = `origin/master` = `6ae46ee` |
+| Live page | `200` at 1280px and at an emulated 375px, no horizontal overflow, hamburger present, sticky header and anchors intact |
+| Metadata on the deploy | `<title>Your Name — …` and the description resolve from `data.ts`; `og:url` = the production alias, `og:image` = `/opengraph-image?34c1abc9…`, which returns **200, `image/png`, 65 KB** — `VERCEL_PROJECT_PRODUCTION_URL` fallback works with no configuration |
+| Memoji on the deploy | `document.images.length === 0` and the monogram circle rendered: `public/memoji.png` is absent, so the fallback branch is what ships |
+| Live form | Filled and submitted through the browser: generic `role="alert"` "Could not send your message right now. Email me directly instead." plus `mailto:you@example.com` — the missing-key path, exactly as designed, because the project has no env vars |
+| Env vars | `vercel env ls` → **No Environment Variables found**; `.env.local` holds only `VERCEL_OIDC_TOKEN`. This is the one thing standing between the live form and real delivery |
+| `robots.txt` | `404` — Next serves none; `app/robots.ts` + `app/sitemap.ts` are the smallest fix if you want crawlers and a sitemap. Not in the v1 scope, and SEO already scores 100 |
+
+**Files touched in Phase 5b:** none in the repo — the deploy used the phase 5a commit as-is. This plan file is the only edit since, plus the local `.vercel/project.json` and `.env.local` (both ignored).
+
+**Uncommitted:** the Phase 5b status update to this plan only. Everything else is committed and pushed; there is no `vercel.json`, no CI workflow and no custom domain.
