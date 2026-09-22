@@ -30,8 +30,8 @@ export function Projects() {
           Projects
         </h2>
         <p className="mt-3 max-w-prose text-sm text-muted-foreground">
-          Things I built to learn something: front ends, an API behind one, and
-          the plumbing that ships them.
+          Freelance client work and things I built to learn something: booking
+          flows, marketing sites, and the plumbing that ships them.
         </p>
 
         <ul className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

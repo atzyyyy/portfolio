@@ -44,12 +44,12 @@ export const site: {
   /** Optional. Point at a file in public/, e.g. "/resume.pdf". */
   resume?: string;
 } = {
-  name: "Your Name",
-  initials: "YN",
-  role: "Frontend & Full-Stack Developer",
-  email: "you@example.com",
-  github: "https://github.com/yourhandle",
-  linkedin: "https://www.linkedin.com/in/yourhandle",
+  name: "Fourthram Kaimo",
+  initials: "FK",
+  role: "Full-Stack Developer",
+  email: "fourthramkaimo@gmail.com",
+  github: "https://github.com/atzyyyy",
+  linkedin: "https://www.linkedin.com/in/fourthramkaimo",
 };
 
 export const navItems: NavItem[] = [
@@ -70,28 +70,41 @@ export const hero = {
 
 export const experience: Experience[] = [
   {
-    company: "Northwind Studio",
-    role: "Frontend Developer",
-    period: "2024 — Present",
-    location: "Remote",
+    company: "From Here",
+    role: "Web Developer / Front End Developer",
+    period: "Oct 2023 — Jul 2026",
+    location: "New Zealand · Remote",
     bullets: [
-      "Ship Vue 3 and Nuxt 3 interfaces for client storefronts, from Figma hand-off to production deploy.",
-      // TODO: real numbers, measured in the field.
-      "Cut Largest Contentful Paint from 4.1s to 1.6s on the busiest storefront by shipping next-gen image formats and deferring third-party scripts.",
-      "Own the shared component layer: Sass design tokens, accessible form primitives, and the review checklist the team runs before release.",
+      "Developed and enhanced 50+ production client websites — new pages, defect fixes, and front-end quality improvements across multiple releases.",
+      "Documented recurring issues and wrote internal guides for repeat resolutions, improving the handoff between devs and QA.",
+      "Collaborated with remote stakeholders in New Zealand and cross-functional teams to prioritize technical improvements and UX fixes.",
+      "Delivered feature updates and bug fixes in agile sprint cycles, helping meet release deadlines consistently.",
     ],
-    stack: ["Vue 3", "Nuxt 3", "TypeScript", "Sass", "Directus"],
+    stack: ["Nuxt 3", "Sass", "Bootstrap", "Tailwind CSS", "Laravel", "Directus"],
   },
   {
-    company: "Acme Digital",
-    role: "Junior Web Developer",
-    period: "2023 — 2024",
-    location: "Manila, PH",
+    company: "Health and Wellness Solutions",
+    role: "Tech Intern",
+    period: "Jun 2022 — Nov 2022",
+    location: "Davao City, PH",
     bullets: [
-      "Built CMS-driven pages in Laravel/Twill and wired the REST endpoints the Vue front end consumes.",
-      "Moved product search from client-side fuzzy matching to server-side filtering, which cut the support tickets filed against it.",
+      "Built reusable React and Material UI components for internal web products.",
+      "Resolved usability issues from stakeholder feedback, improving interface consistency and user flow.",
+      "Managed tickets and bug triage to help maintain sprint timelines and delivery targets.",
     ],
-    stack: ["Laravel", "Twill", "Vue 3", "REST", "MySQL"],
+    stack: ["React", "Material UI"],
+  },
+  {
+    company: "Hayahay!",
+    role: "Web Development Intern",
+    period: "Jul 2021 — Dec 2021",
+    location: "Davao City, PH",
+    bullets: [
+      "Developed features in a MEAN stack sprint environment for responsive web applications.",
+      "Improved cross-device compatibility and accessibility across multiple pages.",
+      "Documented reusable fixes and front-end solutions that improved development efficiency.",
+    ],
+    stack: ["MongoDB", "Express", "Angular", "Node.js"],
   },
 ];
 
@@ -101,58 +114,20 @@ export const experience: Experience[] = [
  */
 export const projects: Project[] = [
   {
-    title: "Portfolio",
+    title: "Samuel — car rental booking",
     description:
-      "This site — dark-only design tokens, App Router sections, and a contact form backed by a Resend Server Action with server-side validation.",
-    tags: ["Next.js", "React", "Tailwind v4"],
-    repo: site.github,
-    year: "2026",
-    featured: true,
-  },
-  {
-    title: "Storefront front end",
-    description:
-      "Nuxt 3 catalogue and marketing front end reading from a Directus headless CMS, with prerendered product routes and a Figma-faithful design system.",
-    tags: ["Nuxt 3", "Vue 3", "Directus"],
-    href: "https://example.com",
-    repo: "https://github.com/yourhandle/storefront",
+      "Freelance build for a New Zealand car rental operator: browse the fleet, pick dates, and send a booking request. Owned front end end to end, from layout to form validation.",
+    tags: ["Nuxt 3", "Bootstrap", "Sass"],
     year: "2025",
     featured: true,
   },
   {
-    title: "Supabase auth starter",
+    title: "Tonic — client portfolio site",
     description:
-      "Email/password and OAuth flows on Supabase, with Postgres row-level security policies and typed queries shared between server and client.",
-    tags: ["Next.js", "Supabase", "Postgres"],
-    repo: "https://github.com/yourhandle/supabase-auth-starter",
+      "Freelance portfolio site for a client: responsive marketing pages built from a design hand-off. Next step is moving the content behind a Supabase backend so the client can edit it without a deploy.",
+    tags: ["Nuxt 3", "Bootstrap", "Sass"],
     year: "2025",
     featured: true,
-  },
-  {
-    title: "Twill CMS API",
-    description:
-      "Laravel + Twill admin behind a versioned REST API: draft/publish workflow, image transforms, and token auth for the consumer apps.",
-    tags: ["Laravel", "Twill", "REST"],
-    repo: "https://github.com/yourhandle/twill-api",
-    year: "2024",
-    featured: true,
-  },
-  {
-    title: "Deploy pipeline",
-    description:
-      "Dockerfile plus GitHub Actions workflow that lints, tests and ships to AWS on merge, with preview environments per pull request.",
-    tags: ["Docker", "GitHub Actions", "AWS"],
-    repo: "https://github.com/yourhandle/deploy-pipeline",
-    year: "2026",
-    featured: false,
-  },
-  {
-    title: "XAUUSD session backtester",
-    description:
-      "Pine Script strategy that backtests 15-minute momentum entries with fixed risk per trade, exporting stats I use to decide what is worth trading live.",
-    tags: ["Pine Script", "Backtesting"],
-    year: "2026",
-    featured: false,
   },
 ];
 

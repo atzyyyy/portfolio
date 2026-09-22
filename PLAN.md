@@ -1,8 +1,8 @@
 # Portfolio — Build Plan (compact)
 
-**Status:** Phases 0–5a built and verified; 5b is **deploying and running** — the site is live on Vercel (production, `Ready`) and the repo is pushed. `npm run lint`, `npx tsc --noEmit` and `npm run build` green. **Open:** (a) `src/lib/data.ts` still holds placeholder employers, dates and metrics — real content is yours to fill; (b) sending is unproven without keys, so the live form answers with the mailto fallback today (verified on the deploy); (c) `public/memoji.png` does not exist, so the deploy shows the monogram circle; (d) the Vercel project has **zero** environment variables. Next: **fill `data.ts`, add the memoji, set the two Resend vars (local + Vercel), redeploy, check on a phone**.
+**Status:** Phases 0–5b built, verified and deployed. `data.ts` now carries real content — identity, three real employers, two paid freelance projects — and Resend is configured: `vercel env ls` shows `RESEND_API_KEY` + `CONTACT_TO_EMAIL` as Secrets on Production and Preview, and both sit in `.env.local`. `npm run lint`, `npx tsc --noEmit` and `npm run build` green on the current tree. **Open:** (a) that content is **uncommitted and undeployed** — the production alias still serves the 5b build (`<title>Your Name — …`), and the `vercel --prod` fired 20 minutes ago is stuck at status `UNKNOWN` with no logs (see Phase 5c); (b) `public/memoji.png` still absent, so the deploy shows the monogram circle; (c) delivery through the **deployed** form is still unproven — it cannot have been exercised while the alias serves the pre-credential build. Next: **commit, redeploy, send one real message, phone pass**.
 
-**Waiting on you:** (1) real content for `site.*`, `experience[]`, `projects[]`; (2) `public/memoji.png` (square, transparent, ≥1024px) — the hero shows a monogram circle until it exists; (3) `RESEND_API_KEY` + `CONTACT_TO_EMAIL` written into `.env.local` — copy `.env.example` (Resend 403s unless `to` is your own account address); (4) a phone pass over the live URL once (1)–(3) land.
+**Waiting on you:** (1) `public/memoji.png` (square, transparent, ≥1024px) — the hero shows a monogram circle until it exists; (2) a call on the stuck deployment: cancel and re-run `vercel --prod`, or diagnose the 20-minute `UNKNOWN` build; (3) one real message through the deployed form once it lands, confirming delivery **and** the Reply-To; (4) a phone pass over the deployed URL.
 
 ## Stack (verified in repo)
 
@@ -111,9 +111,10 @@ Handle `error` explicitly with a generic visitor-facing message, never leak the 
 | 3 ✅ | `data.ts` content + Experience + Projects sections | components verified in Chrome (1/2/3-col grid at sm/md/lg, `rel="noopener"`); **content is still placeholder** — see Notes | 2h |
 | 4 ✅ | contact + action + Resend + guards | verified: empty submit blocked by native validation, bogus email rejected inside the action (direct POST returned the field error), honeypot returns success with **no** send, sub-2s submit rejected, 4th submission in an hour rate-limited, missing key renders the `mailto:` fallback. **Mail delivery itself still unproven — needs the keys** | 1.5h |
 | 5a ✅ | polish: keyboard pass, focus-ring token + contrast, Lighthouse on the production build | 21 focusables in DOM order, each with a ≥3:1 focus indicator; Lighthouse mobile **99/100/100/100** on the production build; `lint`/`tsc`/`build` green | 1h |
-| 5b | deploy: Vercel project + env, live URL checked on a phone | project linked and a production deploy `Ready` at `portfolio-iota-five-kx6zoj4yl0.vercel.app`; **remaining:** the two Resend vars on the project (needs your account) and the phone pass | 1h |
+| 5b | deploy: Vercel project + env, live URL checked on a phone | project linked and a production deploy `Ready` at `portfolio-iota-five-kx6zoj4yl0.vercel.app`; **remaining:** the two Resend vars on the project (needs your account) and the phone pass — the vars landed in Phase 5c | 1h |
+| 5c ✅ in repo | real content: `site.*`, `experience[]`, `projects[]`, projects copy | three real employers with stack badges and two paid freelance projects render; scaffolding projects hidden behind `featured: false`; `lint`/`tsc`/`build` green. **Not committed, not deployed** — see Phase 5c | 1h |
 
-Total ≈ 8h.
+Total ≈ 9h.
 
 ## Out of scope v1
 
@@ -138,7 +139,7 @@ v2 order by learning value: project detail routes → Postgres/Supabase behind p
 
 **Notes on Phase 3**
 
-- **Content is placeholder.** `site.name`/`email`/`github`/`linkedin` are still `"Your Name"` / `you@example.com` / `yourhandle`, and the two experience entries, their dates and the LCP metric are invented to give the layout something to render. Replace them before this link goes anywhere.
+- ~~**Content is placeholder.**~~ **Resolved in Phase 5c:** `site.*`, `experience[]` and `projects[]` now hold real values, and the invented employers/metrics are gone. The scaffolding projects stay in `data.ts` behind `featured: false`.
 - Shape is typed and cheap to extend: `Experience = {company, role, period, location?, bullets[], stack?}`, `Project = {title, description, tags[], href?, repo?, year?, featured?}`. `featured: false` keeps a project in the file without rendering it.
 - Card link strategy: no `after:absolute inset-0` title overlay (it would sit on top of the footer's icon buttons); the title is a link only when `href` exists, and the footer carries the GitHub/live affordances.
 - `hover:ring-dusty-denim/60` beats the generated `ring-foreground/10` because `Card` uses `ring-1` here, not `border` — same class group, so `cn` merges rather than fighting order (pitfall 7).
@@ -203,9 +204,29 @@ v2 order by learning value: project detail routes → Postgres/Supabase behind p
 | Metadata on the deploy | `<title>Your Name — …` and the description resolve from `data.ts`; `og:url` = the production alias, `og:image` = `/opengraph-image?34c1abc9…`, which returns **200, `image/png`, 65 KB** — `VERCEL_PROJECT_PRODUCTION_URL` fallback works with no configuration |
 | Memoji on the deploy | `document.images.length === 0` and the monogram circle rendered: `public/memoji.png` is absent, so the fallback branch is what ships |
 | Live form | Filled and submitted through the browser: generic `role="alert"` "Could not send your message right now. Email me directly instead." plus `mailto:you@example.com` — the missing-key path, exactly as designed, because the project has no env vars |
-| Env vars | `vercel env ls` → **No Environment Variables found**; `.env.local` holds only `VERCEL_OIDC_TOKEN`. This is the one thing standing between the live form and real delivery |
+| Env vars | `vercel env ls` → **No Environment Variables found**; `.env.local` holds only `VERCEL_OIDC_TOKEN`. This is the one thing standing between the live form and real delivery — **resolved in Phase 5c**: both vars are now Secrets on Production and Preview |
 | `robots.txt` | `404` — Next serves none; `app/robots.ts` + `app/sitemap.ts` are the smallest fix if you want crawlers and a sitemap. Not in the v1 scope, and SEO already scores 100 |
 
 **Files touched in Phase 5b:** none in the repo — the deploy used the phase 5a commit as-is. This plan file is the only edit since, plus the local `.vercel/project.json` and `.env.local` (both ignored).
 
 **Uncommitted:** the Phase 5b status update to this plan only. Everything else is committed and pushed; there is no `vercel.json`, no CI workflow and no custom domain.
+
+### Where we are (Phase 5c — real content in, Resend wired, deploy still serving the 5b build)
+
+`npm run lint` + `npx tsc --noEmit` + `npm run build` green on the current tree. None of it is committed, none of it is live.
+
+| | State |
+|---|---|
+| `site.*` | Real and staged: `Fourthram Kaimo` / `FK` / `Full-Stack Developer` / `fourthramkaimo@gmail.com` / `github.com/atzyyyy` / `linkedin.com/in/fourthramkaimo` — metadata, header, contact links and the OG image all read from it |
+| `experience[]` | Three real entries replace the two invented ones: **From Here** (Software Engineer / Front End Developer, Oct 2023 — Jul 2026, New Zealand · Remote, 50+ client sites), **Health and Wellness Solutions** (Tech Intern, Jun–Nov 2022, Davao City), **Hayahay!** (Web Development Intern, Jul–Dec 2021, Davao City). Stacks: Nuxt 3 · Sass · Bootstrap · Tailwind CSS · Laravel · Directus / React · Material UI / MongoDB · Express · Angular · Node.js. Only the 50+ sites is a real metric; the rest stayed qualitative rather than invented |
+| `projects[]` | Two paid freelance builds lead the grid: **Samuel** (NZ car rental booking) and **Tonic** (client portfolio site, Supabase planned), both Nuxt 3 + Bootstrap + Sass, both deliberately without `href`/`repo` since neither is public. The three scaffolding projects are now `featured: false`, so no `example.com` / `yourhandle` URL renders |
+| `projects.tsx` copy | "Things I built to learn something" did not survive paid client work — now "Freelance client work and things I built to learn something: booking flows, marketing sites, and the plumbing that ships them." |
+| Resend | `.env.local` holds `RESEND_API_KEY` + `CONTACT_TO_EMAIL` beside `VERCEL_OIDC_TOKEN`; `vercel env ls` lists both as Secret on **Production** and **Preview** (00:25, 2026-09-23). The project no longer has zero env vars |
+| Deploy | Carries none of this. The alias still answers `<title>Your Name — …` from the 5b build (`pcowcljqx`, 1d, Ready). A production deploy opened 20m before this note (`3k77cy3wh`) reads **`UNKNOWN`** in `vercel ls`, serves "Deployment is building", and is still `UNKNOWN` 21m in with `vercel inspect --logs` printing nothing |
+| Unproven | Delivery + Reply-To through the **deployed** form — the alias serves the pre-credential build, so it cannot have been exercised there. Pitfall 8 still applies: `from` stays `onboarding@resend.dev`, `to` stays the Resend account address until a domain is verified |
+
+**Files touched in Phase 5c:** `src/lib/data.ts`, `src/components/sections/projects.tsx`, this plan. Still missing: `public/memoji.png`.
+
+**Uncommitted:** all of Phase 5c — `data.ts` is `MM` (staged `site.*`, unstaged rest), `projects.tsx` unstaged. The Phase 5b "this plan file is the only edit" line above no longer holds.
+
+**Next, in order:** commit → cancel the stuck `3k77cy3wh` and re-run `vercel --prod` → confirm the alias title and badges change → send one real message through the deployed form, check the inbox and Reply-To → phone pass.
