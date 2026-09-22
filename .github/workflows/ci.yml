@@ -25,5 +25,10 @@ jobs:
 
       - run: npm ci
       - run: npm run lint
+
+      # LayoutProps<"/"> and friends are generated globals. Without this the
+      # checkout has no .next/types, so tsc fails with TS2304 on a clean machine.
+      - run: npx next typegen
+
       - run: npx tsc --noEmit
       - run: npm run build
