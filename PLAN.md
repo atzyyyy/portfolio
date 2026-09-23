@@ -1,8 +1,8 @@
 # Portfolio — Build Plan (compact)
 
-**Status:** Phases 0–5b built, verified and deployed. `data.ts` now carries real content — identity, three real employers, two paid freelance projects — and Resend is configured: `vercel env ls` shows `RESEND_API_KEY` + `CONTACT_TO_EMAIL` as Secrets on Production and Preview, and both sit in `.env.local`. `npm run lint`, `npx tsc --noEmit` and `npm run build` green on the current tree. **Open:** (a) that content is **uncommitted and undeployed** — the production alias still serves the 5b build (`<title>Your Name — …`), and the `vercel --prod` fired 20 minutes ago is stuck at status `UNKNOWN` with no logs (see Phase 5c); (b) `public/memoji.png` still absent, so the deploy shows the monogram circle; (c) delivery through the **deployed** form is still unproven — it cannot have been exercised while the alias serves the pre-credential build. Next: **commit, redeploy, send one real message, phone pass**.
+**Status:** Phases 0–5b built, verified and deployed. `data.ts` now carries real content — identity, three real employers, two paid freelance projects — and Resend is configured: `vercel env ls` shows `RESEND_API_KEY` + `CONTACT_TO_EMAIL` as Secrets on Production and Preview, and both sit in `.env.local`. `npm run lint`, `npx tsc --noEmit` and `npm run build` green on the current tree. **Open:** (a) that content is **uncommitted and undeployed** — the production alias still serves the 5b build (`<title>Your Name — …`), and the `vercel --prod` fired 20 minutes ago is stuck at status `UNKNOWN` with no logs (see Phase 5c); (b) the hero Memoji is **video now, not GIF** (Phase 5d): 60fps MP4+WebM (264 KB) replaced the 15fps 2.0 MB `memoji.gif`, verified playing in the browser; the GIF is still in `public/` and ships unused until it is deleted; (c) delivery through the **deployed** form is still unproven — it cannot have been exercised while the alias serves the pre-credential build. Next: **commit, redeploy, send one real message, phone pass**.
 
-**Waiting on you:** (1) `public/memoji.png` (square, transparent, ≥1024px) — the hero shows a monogram circle until it exists; (2) a call on the stuck deployment: cancel and re-run `vercel --prod`, or diagnose the 20-minute `UNKNOWN` build; (3) one real message through the deployed form once it lands, confirming delivery **and** the Reply-To; (4) a phone pass over the deployed URL.
+**Waiting on you:** (1) `public/memoji.gif` is 2.0 MB and no longer used by the component once the video exists — say the word and I delete it (it is **not** in git, so the copy under `/tmp/memoji/` is the only backup); a re-export at 60fps/source resolution is still the only real sharpness fix; (2) a call on the stuck deployment: cancel and re-run `vercel --prod`, or diagnose the 20-minute `UNKNOWN` build; (3) one real message through the deployed form once it lands, confirming delivery **and** the Reply-To; (4) a phone pass over the deployed URL.
 
 ## Stack (verified in repo)
 
@@ -15,7 +15,7 @@
 
 ## Locked decisions
 
-- **D1 Memoji** — static PNG `public/memoji.png`: square, transparent, ≥1024px, cropped tight. Glow + one-shot entrance fade only.
+- **D1 Memoji** — **video first** (Phase 5d): `public/memoji.webm` + `public/memoji.mp4`, 400x300, 60fps, solid black background, plus `memoji-poster.jpg` for the first paint. Falls back to animated `public/memoji.gif`, then a `/memoji.png` still (square, transparent, ≥1024px), then a monogram circle. No glow layer (it hazed the face under the blend). Bigger export wanted: 400x300 is the sharpness ceiling. **Rejected:** transparent-alpha video `.mov` (HEVC+alpha) — Safari-only, and the GIF has zero alpha anyway (verified: alpha plane is uniformly opaque), so the black background stays and `mix-blend-lighten` erases it.
 - **D2 Contact** — Resend free tier via Server Action. With **no verified domain**: `from` must be `… <onboarding@resend.dev>` and `to` must be your own Resend account address, else **403**. Visitor email goes in `replyTo`. Verifying a domain later changes only `from`.
 - **D3 Theme** — dark only, tokens in `.dark`, `<html class="dark">`. No light mode, no toggle.
 - **D4 Content** — typed `src/lib/data.ts`. No CMS, no MDX.
@@ -47,18 +47,32 @@ components/sections/{hero,experience,projects,contact}.tsx
 components/contact-form.tsx client useActionState inline status
 lib/data.ts                 typed nav / experience / projects
 components/ui/*             shadcn-generated only
-public/memoji.png           D1 asset
+public/memoji.{webm,mp4}     D1 asset (animated video, 400x300, 60fps) + memoji-poster.jpg
+public/memoji.gif           D1 fallback (animated, 400x300) — unused while the video exists, still 2.0 MB
+public/{icon,favicon-96x96,apple-touch-icon,web-app-manifest-*}.png + favicon.{ico,svg} + site.webmanifest
+                            icons wired in layout.tsx metadata (src/app/favicon.ico — the create-next-app default — deleted so /favicon.ico serves public/favicon.ico)
 ```
 
 Not installing `form` (pulls React Hook Form) or `sonner` (extra provider) for a two-field form.
 
 ## Sections
 
-**Header** — monogram + name → `#top`; `hidden md:flex` 4 anchors, `text-sm text-foreground/80 hover:text-foreground`; `< md` lucide `MenuIcon` inside `Sheet`, `SheetClose` on each link. Wrapper: `sticky top-0 z-50 border-b border-border/60 bg-background/80 backdrop-blur`. Sections get `scroll-mt-24`. Base UI has no `asChild`: use `render={<Button variant="ghost" size="icon" />}`; links styled as buttons take `buttonVariants({...})` in className.
+**Header** — `public/icon.png` alone (black line art, so it sits on a `bg-primary` chip; 36px icon in a 44px `rounded-full` circle, wordmark removed, the name lives on `aria-label` so the link still announces) → `#top`; `hidden md:flex` 4 anchors, `text-sm text-foreground/80 hover:text-foreground`; `< md` lucide `MenuIcon` inside `Sheet`, `SheetClose` on each link. Wrapper: `sticky top-0 z-50 border-b border-border/60 bg-background/80 backdrop-blur`. Sections get `scroll-mt-24`. Base UI has no `asChild`: use `render={<Button variant="ghost" size="icon" />}`; links styled as buttons take `buttonVariants({...})` in className.
 
 **Hero** — `section#top` + `scroll-mt-24`, container `max-w-5xl px-4 sm:px-6 py-20 md:py-28`, grid `md:grid-cols-[1.1fr_0.9fr]`, so text comes first on mobile. Copy lives in `data.ts` (`site.name`, `site.role`, `hero.tagline`, `hero.stack`). `h1` name `text-4xl sm:text-5xl lg:text-6xl tracking-tight text-balance`, role `text-lg text-foreground/80`, tagline `text-muted-foreground` (146 chars, dusty-denim on ink = 5.11 AA), CTAs `h-11 px-5` → "See my work" `#projects` (alabaster/ink 13.24) + outline "Get in touch" `#contact`, then `Badge variant="secondary"` pills (dusk-blue/alabaster 5.41 AA).
 
-**Memoji** — `memoji.tsx`, server component. `fs.existsSync(process.cwd()/public/memoji.png)` picks the branch, so a missing asset renders a monogram circle (`aspect-square rounded-full border border-border bg-card` + initials) — never a broken `<Image>`. Image branch: `next/image` with `width/height={1024}`, `priority`, `alt=""` (decorative — the name is adjacent), wrapper `w-[60%] max-w-[16rem] sm:w-64 lg:w-80`, glow `bg-[radial-gradient(circle_at_50%_40%,var(--dusty-denim),transparent_70%)] opacity-25 blur-2xl`. Both branches produce the same box, so swapping the asset in shifts nothing. Deferred to v2: float/tilt, blink swap, pointer parallax (then gate on `prefers-reduced-motion`). Rejected: Lottie, alpha-channel video loops.
+**Memoji** — `memoji.tsx`, server component. `fs.existsSync` picks the first available branch — `memoji.webm`/`memoji.mp4` (video), else `memoji.gif`, else `memoji.png`, else a monogram circle (`aspect-square rounded-full border border-border bg-card` + initials) — never a broken media element. Video branch: `<video>` with `autoPlay loop muted playsInline preload="auto" poster="/memoji-poster.jpg"`, one `<source>` per existing file (WebM first for size, MP4 last as the universal fallback), `aria-hidden` (decorative — the name is adjacent). Still branch: `next/image` with the asset's real `width/height` (400x300 for the GIF), `priority`, `unoptimized` for the GIF (the optimizer keeps only frame one), `alt=""`. Shared wrapper: `aspect-square w-[70%] max-w-[24rem] sm:w-72 lg:w-96` (288 → 384px, the column's full width) + `object-cover` (crops the empty side margins) + `mix-blend-lighten`, so the pure-black background *becomes* whatever is behind it (no black disc, no rectangular seam — `lighten` of black is a no-op). No glow layer: with blending the blur read as a haze *over* the face, so the flat page behind the head is the backdrop. Retina headroom: the source head is only 149x195px, so it is upscaled ~1.3x at 384px — a bigger Memoji export is the only real sharpness fix. Both branches produce the same box, so swapping the asset in shifts nothing. Deferred to v2: float/tilt, blink swap, pointer parallax (then gate on `prefers-reduced-motion`).
+
+**Why the GIF stuttered, and what replaced it** — the GIF is 400x300, 121 frames, 8.07s: an average 15fps whose frame delays land on the 10ms GIF grid, so real timestamps alternate 60/70ms (0.00, 0.07, 0.13, 0.20, 0.27, 0.33 …). The cadence, not just the low rate, is what reads as judder — and GIF also forces 256-colour dithering and decodes on the main thread. Re-encoded to `libx264` CRF 18 at a constant 60fps via `minterpolate=fps=60:mi_mode=mci:mc_mode=aobmc:me_mode=bidir:vsbmc=1` (motion-compensated interpolation), then VP9 CRF 34 from that MP4. Payload dropped **2.0 MB → 264 KB** (WebM 97 KB + MP4 168 KB + 6 KB poster) and the browser picked WebM. Verify by regenerating from `public/memoji.gif`:
+
+```
+ffmpeg -y -i memoji.gif -vf "minterpolate=fps=60:mi_mode=mci:mc_mode=aobmc:me_mode=bidir:vsbmc=1,format=yuv420p" \
+  -c:v libx264 -crf 18 -preset slow -movflags +faststart -an memoji.mp4
+ffmpeg -y -i memoji.mp4 -c:v libvpx-vp9 -crf 34 -b:v 0 -row-mt 1 -an memoji.webm
+ffmpeg -y -i memoji.mp4 -frames:v 1 -q:v 3 memoji-poster.jpg
+```
+
+`format=yuv420p` is required: the GIF decodes as `bgra`, and VP9 refuses `gbrap` outright. Interpolation is a stopgap — it invents 45 of every 60 frames, so a genuinely smooth result needs a 60fps re-export from Apple (screen-record the Memoji on the phone, or capture the Animation pane in the Memoji editor) at a higher resolution, which also fixes the 149px-tall source head.
 
 **Experience** — data `{company, role, period, location?, bullets[], stack?}`; `<ol>` with `border-l border-border`, dusty-denim dot, role `font-medium text-foreground`, company/period `text-sm text-muted-foreground`. No timeline component; 2–4 bullets starting with a verb and a number where possible. Use `Separator` or `border-l`, not both.
 
@@ -114,7 +128,9 @@ Handle `error` explicitly with a generic visitor-facing message, never leak the 
 | 5b | deploy: Vercel project + env, live URL checked on a phone | project linked and a production deploy `Ready` at `portfolio-iota-five-kx6zoj4yl0.vercel.app`; **remaining:** the two Resend vars on the project (needs your account) and the phone pass — the vars landed in Phase 5c | 1h |
 | 5c ✅ in repo | real content: `site.*`, `experience[]`, `projects[]`, projects copy | three real employers with stack badges and two paid freelance projects render; scaffolding projects hidden behind `featured: false`; `lint`/`tsc`/`build` green. **Not committed, not deployed** — see Phase 5c | 1h |
 
-Total ≈ 9h.
+| 5d ✅ in repo | Memoji GIF → 60fps video (`memoji.tsx` video branch, `public/memoji.{webm,mp4}` + poster) | verified in Chrome: `paused:false`, `readyState:4`, 7.93s loop advancing, 384x384 box, WebM selected, 316 frames decoded, no black box behind the head; `lint`/`tsc`/`build` green | 0.5h |
+
+Total ≈ 9.5h.
 
 ## Out of scope v1
 
@@ -230,3 +246,5 @@ v2 order by learning value: project detail routes → Postgres/Supabase behind p
 **Uncommitted:** all of Phase 5c — `data.ts` is `MM` (staged `site.*`, unstaged rest), `projects.tsx` unstaged. The Phase 5b "this plan file is the only edit" line above no longer holds.
 
 **Next, in order:** commit → cancel the stuck `3k77cy3wh` and re-run `vercel --prod` → confirm the alias title and badges change → send one real message through the deployed form, check the inbox and Reply-To → phone pass.
+
+**Phase 5d (Memoji → video), verified in Chrome:** assets `public/memoji.webm` 97 KB + `public/memoji.mp4` 168 KB + `memoji-poster.jpg` 6 KB (400x300, 60fps, re-encoded from the GIF, which is untouched). `memoji.tsx` tries WebM → MP4 → GIF → PNG → monogram. `paused: false`, `muted: true`, `readyState: 4`, 7.93s loop, `currentTime` advancing 3.17s → 5.18s over 2s, box 384x384, `currentSrc` `/memoji.webm`, 316 frames decoded; SSR HTML carries `muted` (React 19 does render it, so autoplay is not blocked) and both `<source>` tags; `/memoji.mp4` 200 `video/mp4`, `/memoji.webm` 200 `video/webm`, poster 200 `image/jpeg`; screenshot shows no black box, seam or disc — `mix-blend-lighten` erases the black background on a `<video>` exactly as it did on the `<img>`. Interpolation QA: 14 frames across the loop plus full-res pairs at 4.67s / 6.00s / 7.33s against matching source frames showed no ghosted or warped contours. `lint`/`tsc`/`build` green, still uncommitted, still not live. Open: the 2.0 MB GIF is now unused, and interpolation does not replace a real 60fps source export.

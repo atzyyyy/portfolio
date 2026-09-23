@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { MenuIcon } from "lucide-react";
 
 import { Button, buttonVariants } from "@/components/ui/button";
@@ -35,15 +36,19 @@ export function SiteHeader() {
       <div className="mx-auto flex h-16 w-full max-w-5xl items-center justify-between gap-4 px-4 sm:px-6">
         <Link
           href="#top"
-          className="flex items-center gap-2.5 rounded-md outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+          aria-label={site.name}
+          className="rounded-full outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
         >
-          <span
-            aria-hidden
-            className="grid size-8 shrink-0 place-items-center rounded-lg bg-primary text-xs font-semibold text-primary-foreground"
-          >
-            {site.initials}
-          </span>
-          <span className="font-heading text-sm font-medium">{site.name}</span>
+          {/* the icon is black line art — it needs the light chip behind it */}
+            <Image
+              src="/icon.png"
+              alt=""
+              width={285}
+              height={285}
+              priority
+              className="size-9 object-contain rounded-full"
+            />
+
         </Link>
 
         <nav aria-label="Main" className="hidden items-center gap-1 md:flex">

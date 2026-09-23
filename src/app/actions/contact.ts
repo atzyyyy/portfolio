@@ -135,13 +135,15 @@ export async function sendContactMessage(
 
   // Without a verified sending domain Resend only accepts
   // `onboarding@resend.dev` as `from` and your own account address as `to`.
+  // Plain text only: with no `html` part there is nothing to escape, so the
+  // visitor's address and message go in verbatim.
   const resend = new Resend(apiKey);
   const { error } = await resend.emails.send({
     from: process.env.RESEND_FROM ?? "Portfolio <onboarding@resend.dev>",
     to: [to],
     replyTo: email,
     subject: `Portfolio contact from ${email}`,
-    text: message,
+    text: `Email: ${email}\nMessage:\n${message}`,
   });
 
   if (error) {

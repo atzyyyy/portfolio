@@ -1,3 +1,6 @@
+import fs from "node:fs";
+import path from "node:path";
+
 import { ImageResponse } from "next/og";
 
 import { hero, site } from "@/lib/data";
@@ -7,6 +10,15 @@ const ink = "#0d1b2a";
 const prussian = "#1b263b";
 const dusk = "#415a77";
 const alabaster = "#e0e1dd";
+
+/**
+ * Same mark the header uses. Inlined as a data URI because Satori cannot fetch
+ * a relative `/icon.png` and an absolute URL would need a reachable origin at
+ * build time.
+ */
+const iconSrc = `data:image/png;base64,${fs
+  .readFileSync(path.join(process.cwd(), "public", "icon.png"))
+  .toString("base64")}`;
 
 export const alt = `${site.name} — ${site.role}`;
 export const size = { width: 1200, height: 630 };
@@ -32,16 +44,13 @@ export default function Image() {
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              width: 64,
-              height: 64,
-              borderRadius: 16,
+              width: 72,
+              height: 72,
+              borderRadius: 9999,
               background: alabaster,
-              color: ink,
-              fontSize: 26,
-              fontWeight: 600,
             }}
           >
-            {site.initials}
+            <img src={iconSrc} alt="" width={56} height={56} />
           </div>
           <div style={{ display: "flex", fontSize: 28, color: alabaster }}>
             {site.name}

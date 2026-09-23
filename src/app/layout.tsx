@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { SiteHeader } from "@/components/site-header";
@@ -33,6 +33,17 @@ export const metadata: Metadata = {
   metadataBase: siteUrl,
   title,
   description,
+  manifest: "/site.webmanifest",
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "48x48", type: "image/x-icon" },
+      { url: "/favicon.svg", type: "image/svg+xml" },
+      { url: "/favicon-96x96.png", sizes: "96x96", type: "image/png" },
+    ],
+    apple: [
+      { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+    ],
+  },
   openGraph: {
     type: "website",
     url: "/",
@@ -45,6 +56,12 @@ export const metadata: Metadata = {
     title,
     description,
   },
+};
+
+/** Dark-only site: `themeColor` tints the browser/OS chrome to ink-black. */
+export const viewport: Viewport = {
+  themeColor: "#0d1b2a",
+  colorScheme: "dark",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
